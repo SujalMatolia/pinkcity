@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Pinkcity - Lucky Number Game</title>
+    <style>
+      /* Header styling */
+
+      header {
+        background-color: rgba(90, 169, 244, 0.955);
+        padding: 20px;
+        text-align: center;
+      }
+
+      h1 {
+        color: rgba(175, 5, 248, 0.942);
+        font-size: 42px;
+      }
+
+      h2 {
+        color: rgb(206, 62, 250);
+        font-size: 20px;
+      }
+
+      button {
+        background-color: rgb(75, 222, 67);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        margin-right: 10px;
+        font-size: 16px;
+      }
+
+      /* Result section styling */
+
+      #resultSection {
+        margin-top: 20px;
+        text-align: center;
+      }
+
+      h3 {
+        font-size: 20px;
+        margin-bottom: 10px;
+      }
+
+      #resultTable {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      #resultTable th,
+      #resultTable td {
+        border: 1px solid rgba(90, 169, 244, 0.955);
+        padding: 8px;
+      }
+
+      #resultTable th {
+        background-color: rgba(90, 169, 244, 0.955);
+        color: white;
+      }
+
+      /* Lucky number styling */
+
+      #number {
+        color: red;
+        font-weight: bold;
+        font-size: x-large;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <h1>PinkCity</h1>
+      <h2>Timing of the result: 8:30</h2>
+    </header>
+    <section id="resultSection">
+      <h3>Today's Lucky Number is:</h3>
+      <p id="number"></p>
+      <table id="resultTable">
+        <tr>
+          <th>Date</th>
+          <th>Number</th>
+        </tr>
+      </table>
+    </section>
+
+    <script>
+     
+      function fetchNumbers() {
+        fetch("/getnumbers-history")
+          .then((response) => response.json())
+          .then((data) => {
+            var tableBody = document
+              .getElementById("resultTable")
+              .getElementsByTagName("tbody")[0];
+            var currentDate = new Date();
+
+            data.numbers.forEach((entry) => {
+              var newRow = tableBody.insertRow();
+              var dateCell = newRow.insertCell();
+              var numberCell = newRow.insertCell();
+              dateCell.innerHTML = entry.date;
+              numberCell.innerHTML = entry.number;
+            });
+
+            var todaysNumber = getTodaysNumber(data.numbers); // Get today's lucky number
+            displayTodaysNumber(todaysNumber); // Display today's lucky number
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+
+      function getTodaysNumber(numbers) {
+        var today = new Date().toLocaleDateString();
+
+        for (var i = 0; i < numbers.length; i++) {
+          if (numbers[i].date === today) {
+            return numbers[i].number;
+          }
+        }
+
+        return null; // Return null if today's number is not found
+      }
+
+      function displayTodaysNumber(number) {
+        var numberElement = document.getElementById("number");
+        if (number) {
+          numberElement.innerHTML = number;
+        } else {
+          numberElement.innerHTML = "";
+        }
+      }
+
+      function getTodaysNumber(numbers) {
+        var today = new Date().toLocaleDateString();
+
+        for (var i = 0; i < numbers.length; i++) {
+          var entryDate = new Date(numbers[i].date).toLocaleDateString();
+          if (entryDate === today) {
+            return numbers[i].number;
+          }
+        }
+
+        return null; // Return null if today's number is not found
+      }
+
+      window.onload = function () {
+        fetchNumbers();
+      };
+    </script>
+  </body>
+</html>
