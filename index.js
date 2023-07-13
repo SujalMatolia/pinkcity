@@ -54,7 +54,7 @@ app.post("/login", (req, res) => {
 });
 const numberSchema = new mongoose.Schema({
   number: {
-    type: Number,
+    type: String,
     required: true,
   },
   date: {
